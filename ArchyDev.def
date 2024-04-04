@@ -1,0 +1,21 @@
+Bootstrap: library
+From: archlinux:latest
+
+%post
+    # Update the package manager and upgrade any existing packages
+    pacman -Syu --noconfirm
+
+    # Install development tools
+    pacman -S --noconfirm nano gvim emacs notepadqq gcc python python-pip git valgrind cmake gdb
+
+    # Arch Linux uses Python 3 by default, so no alternatives are needed
+
+    # Clean up pacman cache to reduce image size
+    pacman -Scc --noconfirm
+
+%environment
+    export LANG=C.UTF-8
+    export LC_ALL=C.UTF-8
+
+%runscript
+    echo "Container with development tools: nano, GVim, Emacs, Notepadqq, GCC, Python, pip, Git, Valgrind, CMake, and GDB"

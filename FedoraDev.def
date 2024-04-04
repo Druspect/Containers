@@ -1,0 +1,23 @@
+Bootstrap: library
+From: fedora:latest
+
+%post
+    # Update the package manager and upgrade any existing packages
+    dnf update -y
+
+    # Install development tools
+    dnf install -y nano vim emacs notepadqq gcc gcc-c++ python3 python3-pip git valgrind cmake gdb
+
+    # Set up Python and pip
+    alternatives --set python /usr/bin/python3
+    alternatives --set pip /usr/bin/pip3
+
+    # Clean up dnf cache to reduce image size
+    dnf clean all
+
+%environment
+    export LANG=C.UTF-8
+    export LC_ALL=C.UTF-8
+
+%runscript
+    echo "Container with development tools: nano, Vim, Emacs, Notepadqq, GCC, G++, Python, pip, Git, Valgrind, CMake, and GDB"

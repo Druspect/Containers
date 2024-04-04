@@ -1,0 +1,21 @@
+Bootstrap: library
+From: alpine:latest
+
+%post
+    # Update the package manager
+    apk update
+
+    # Install development tools
+    apk add nano notepadqq g++ python3 py3-pip git valgrind cmake gdb
+
+    # There's no alternative system in Alpine, Python 3 is default
+
+    # Clean up apk cache
+    rm -rf /var/cache/apk/*
+
+%environment
+    export LANG=C.UTF-8
+    export LC_ALL=C.UTF-8
+
+%runscript
+    echo "Container with development tools: nano, Notepadqq, G++, Python, pip, Git, Valgrind, CMake, and GDB"
