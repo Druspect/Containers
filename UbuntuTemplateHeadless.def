@@ -1,0 +1,55 @@
+Bootstrap: docker
+From: ubuntu:20.04
+
+# Version and Documentation
+# Version: X.X.X
+# Documentation: This container is designed to run [Your Software] in a headless environment.
+
+%files
+    # Software Binary or Installer
+    # /path/to/your/software/installer /opt/software/installer
+    # Additional files like assets, plugins, or scripts can go here
+    # /path/to/your/assets /opt/assets
+
+%post
+    # Install System Packages and Locale
+    echo "Installing system packages and setting locale..."
+    apt-get update
+    apt-get install -y locales
+    locale-gen en_US.UTF-8
+
+    # Create Non-Root User
+    echo "Creating non-root user..."
+    useradd -ms /bin/bash user_name
+
+    # Check and Install Software
+    echo "Installing software..."
+    # Your software installation steps here
+
+    # Cleanup
+    echo "Cleaning up..."
+    apt-get clean
+
+%environment
+    # Basic Environment Setup
+    export LC_ALL=en_US.UTF-8
+    export LANG=en_US.UTF-8
+    export LANGUAGE=en_US.UTF-8
+
+%runscript
+    # Custom Entry Point (Wrapper Script)
+    if [ "$1" = "-i" ]; then
+        echo "Entering Interactive Mode..."
+        exec /bin/bash
+    elif [ "$1" = "--help" ]; then
+        echo "Help for [Your Software] Container:"
+        echo "  -i                 : Enter interactive mode."
+        echo "  --version-check    : Check if the current version is up to date."
+        echo "  [Software Commands]: Execute any [Your Software]-specific command."
+    elif [ "$1" = "--version-check" ]; then
+        echo "You are running [Your Software] version X.X.X in this container."
+        echo "Please check the official [Your Software] website for any updates."
+    else
+        echo "Executing [Your Software] command..."
+        exec "$@"
+    fi

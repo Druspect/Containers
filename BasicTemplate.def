@@ -1,0 +1,30 @@
+# This line specifies the bootstrap agent that determines the base of your container.
+# Here, we are using a Docker image as the base.
+Bootstrap: docker
+
+# The 'From' keyword specifies the Docker image you want to base your container on.
+# In this case, we're using the Ubuntu 20.04 LTS image.
+From: ubuntu:20.04
+
+# The '%post' section runs during the container's build process.
+# This is where you install any software and dependencies your container needs.
+%post
+    # Update the package list
+    apt-get update
+    
+    # Install a basic text editor (nano)
+    apt-get install -y nano
+    
+# The '%environment' section sets environment variables within the container.
+# These are available during runtime and can be used to configure your software.
+%environment
+    export MY_VARIABLE=my_value
+
+# The '%runscript' section specifies the commands that will be run when the container
+# is executed. You can think of it as the container's 'main' function.
+%runscript
+    # Echo a greeting
+    echo "Hello, this is your container speaking."
+    
+    # Use the environment variable
+    echo "MY_VARIABLE is set to $MY_VARIABLE"
