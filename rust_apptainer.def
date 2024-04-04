@@ -1,0 +1,22 @@
+Bootstrap: docker
+From: ubuntu:latest
+
+%post
+    # Update and install necessary packages
+    apt-get update && apt-get install -y wget build-essential curl
+    
+    # Download and install Rust without prompting for input
+        curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y > /root/rust_installation_log.txt 2>&1
+    
+    # The Rust installation script adds environment variables to .profile or .bash_profile
+    # which are not automatically sourced in this non-interactive shell environment.
+
+%environment
+    # Append Rust's cargo bin directory to PATH
+    # Note: Adjust the PATH to use /root/.cargo/bin if running as root, or $HOME/.cargo/bin if as a user.
+    echo 'export PATH="$PATH:/root/.cargo/bin"' >> $HOME/.profile
+
+%runscript
+    # Example run script that verifies Rust installation by printing the version of rustc
+    echo "Rust version:"
+    rustc --version
