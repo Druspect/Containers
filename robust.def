@@ -1,0 +1,101 @@
+Bootstrap: docker
+From: ubuntu:22.04
+
+%setup
+    # No additional setup required outside the container.
+
+%environment
+    export DISPLAY=localhost:10.0
+    export LC_ALL=C.UTF-8
+    export LANG=C.UTF-8
+    export XDG_RUNTIME_DIR=/tmp/xdg-runtime
+
+%post
+    # Create XDG runtime directory for D-Bus
+    mkdir -p /tmp/xdg-runtime
+    chmod 700 /tmp/xdg-runtime
+
+    # Update and install essential packages
+    apt-get update && apt-get install -y \
+        xfce4 \
+        xorg \
+        dbus-x11 \
+        xauth \
+        curl \
+        wget \
+        firefox \
+        vim \
+        nano \
+        htop \
+        build-essential \
+        python3 \
+        python3-pip \
+        openjdk-11-jdk \
+        net-tools \
+        iputils-ping \
+        gnupg2 \
+        software-properties-common \
+        unzip \
+        zip \
+        tmux \
+        zsh \
+        git \
+        jq \
+        lynx \
+        traceroute \
+        mtr \
+        fish \
+        mc \
+        neovim \
+        p7zip-full \
+        unrar \
+        gnome-screenshot \
+        evolution \
+        dconf-editor \
+        gparted \
+        keepassxc \
+        nodejs \
+        npm
+
+    # Install multimedia and web browsing capabilities
+    apt-get install -y vlc \
+        gimp \
+        inkscape \
+        gedit \
+        filezilla \
+        libreoffice
+
+    # Add fun utilities and games
+    apt-get install -y \
+        fortune \
+        sl \
+        cowsay \
+        neofetch \
+        x11-apps \
+        bsdgames
+
+    # Clean up to save space
+    apt-get clean
+
+%runscript
+    echo "Welcome to the robust Ubuntu container!"
+    xfce4-session
+
+%startscript
+    # Set up runtime directory and start D-Bus for GUI functionality
+    mkdir -p /tmp/xdg-runtime
+    export XDG_RUNTIME_DIR=/tmp/xdg-runtime
+    chmod 700 /tmp/xdg-runtime
+    
+    eval $(dbus-launch --sh-syntax)
+    export DBUS_SESSION_BUS_ADDRESS
+
+    # Start XFCE session in background
+    startxfce4 &
+
+%labels
+    Author "Nitrous Support Manager"
+    Version "2.1"
+
+%help
+    This container includes a full desktop environment (XFCE) along with web browsing, multimedia, development tools, and many other tools to enhance the user experience.

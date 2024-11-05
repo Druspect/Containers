@@ -1,0 +1,107 @@
+Bootstrap: docker
+From: fedora:latest
+
+%setup
+    # No additional setup required outside the container.
+
+%environment
+    export DISPLAY=localhost:10.0
+    export LC_ALL=C.UTF-8
+    export LANG=C.UTF-8
+    export XDG_RUNTIME_DIR=/tmp/xdg-runtime
+
+%post
+    # Create XDG runtime directory for D-Bus
+    mkdir -p /tmp/xdg-runtime
+    chmod 700 /tmp/xdg-runtime
+
+    # Update and install essential packages
+    dnf install -y \
+        xfce4-panel \
+        xfce4-session \
+        xfce4-settings \
+        xfdesktop \
+        xfwm4 \
+        xorg-x11-server-Xorg \
+        dbus-x11 \
+        xauth \
+        curl \
+        wget \
+        firefox \
+        vim-enhanced \
+        nano \
+        htop \
+        make \
+        gcc \
+        gcc-c++ \
+        python3 \
+        python3-pip \
+        java-11-openjdk \
+        net-tools \
+        iputils \
+        gnupg2 \
+        dnf-plugins-core \
+        unzip \
+        zip \
+        tmux \
+        zsh \
+        git \
+        jq \
+        lynx \
+        traceroute \
+        mtr \
+        fish \
+        mc \
+        neovim \
+        p7zip \
+        unrar \
+        gnome-screenshot \
+        evolution \
+        dconf-editor \
+        gparted \
+        keepassxc \
+        nodejs \
+        npm
+
+    # Install multimedia and web browsing capabilities
+    dnf install -y vlc \
+        gimp \
+        inkscape \
+        gedit \
+        filezilla \
+        libreoffice
+
+    # Add fun utilities and games
+    dnf install -y \
+        fortune-mod \
+        sl \
+        cowsay \
+        neofetch \
+        xorg-x11-apps \
+        bsd-games
+
+    # Clean up to save space
+    dnf clean all
+
+%runscript
+    echo "Welcome to the robust Fedora container!"
+    xfce4-session
+
+%startscript
+    # Set up runtime directory and start D-Bus for GUI functionality
+    mkdir -p /tmp/xdg-runtime
+    export XDG_RUNTIME_DIR=/tmp/xdg-runtime
+    chmod 700 /tmp/xdg-runtime
+    
+    eval $(dbus-launch --sh-syntax)
+    export DBUS_SESSION_BUS_ADDRESS
+
+    # Start XFCE session in background
+    startxfce4 &
+
+%labels
+    Author "Nitrous Support Manager"
+    Version "2.1"
+
+%help
+    This container includes a full desktop environment (XFCE) along with web browsing, multimedia, development tools, and many other tools to enhance the user experience.
