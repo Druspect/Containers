@@ -1,0 +1,75 @@
+Bootstrap: docker
+From: debian:bullseye
+
+%environment
+    export DISPLAY=localhost:10.0
+    export LC_ALL=C.UTF-8
+    export LANG=C.UTF-8
+    export XDG_RUNTIME_DIR=/tmp/xdg-runtime
+
+%post
+    # Update and install essential packages
+    apt-get update && apt-get install -y \
+        icewm \
+        xorg \
+        dbus-x11 \
+        curl \
+        wget \
+        vim \
+        nano \
+        htop \
+        openvpn \
+        python3 \
+        python3-pip \
+        g++ \
+        git \
+        net-tools \
+        iputils-ping \
+        nmap \
+        wireshark \
+        tcpdump \
+        john \
+        aircrack-ng \
+        hydra \
+        sqlmap \
+        whois \
+        gnome-terminal \
+        gparted \
+        bleachbit \
+        remmina \
+        hexchat \
+        clamav \
+        ufw \
+        keepassxc \
+        audacity \
+        notepadqq
+
+    # Install ProtonVPN CLI
+    pip3 install protonvpn-cli
+
+    # Create XDG runtime directory for D-Bus
+    mkdir -p /tmp/xdg-runtime
+    chmod 700 /tmp/xdg-runtime
+
+    # Clean up
+    apt-get clean
+
+%runscript
+    echo "Welcome to the Debian container with IceWM!"
+    icewm-session
+
+%startscript
+    # Set up runtime directory and start D-Bus
+    mkdir -p /tmp/xdg-runtime
+    export XDG_RUNTIME_DIR=/tmp/xdg-runtime
+    chmod 700 /tmp/xdg-runtime
+
+    eval $(dbus-launch --sh-syntax)
+    export DBUS_SESSION_BUS_ADDRESS
+
+    # Start IceWM session
+    icewm-session &
+
+%labels
+    Author "Nitrous Support Manager"
+    Version "Debian-IceWM"

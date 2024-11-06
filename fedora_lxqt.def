@@ -1,0 +1,104 @@
+Bootstrap: docker
+From: fedora:latest
+
+%setup
+    # No additional setup required outside the container.
+
+%environment
+    export DISPLAY=localhost:10.0
+    export LC_ALL=C.UTF-8
+    export LANG=C.UTF-8
+    export XDG_RUNTIME_DIR=/tmp/xdg-runtime
+
+%post
+    # Update and install LXQt desktop environment and essential packages
+    dnf install --skip-broken -y \
+        # LXQt Components
+        lxqt-panel \
+        lxqt-session \
+        lxqt-config \
+        lxqt-policykit \
+        lxqt-powermanagement \
+        lxqt-runner \
+        lxqt-qtplugin \
+        lxqt-about \
+        lxqt-admin \
+        lxqt-globalkeys \
+        lxqt-notificationd \
+        lxqt-openssh-askpass \
+        openbox \
+        # Core tools and applications
+        xorg-x11-server-Xorg \
+        dbus-x11 \
+        xauth \
+        wget \
+        nano \
+        vim-enhanced \
+        htop \
+        openvpn \
+        python3 \
+        python3-pip \
+        gcc-c++ \
+        git \
+        net-tools \
+        iputils \
+        nmap \
+        wireshark \
+        tcpdump \
+        john \
+        aircrack-ng \
+        hydra \
+        firefox \
+        chromium \
+        thunderbird \
+        filezilla \
+        libreoffice \
+        gedit \
+        gimp \
+        inkscape \
+        evince \
+        fuse-sshfs \
+        tigervnc-server \
+        gparted \
+        tmux \
+        screen \
+        lxappearance \
+        feh \
+        lxqt-themes \
+        arc-theme \
+        papirus-icon-theme \
+        compton \
+        nitrogen
+
+    # Install additional Python packages for development and data analysis
+    pip3 install numpy pandas matplotlib jupyterlab scikit-learn seaborn scipy
+
+    # Set up necessary runtime and temporary directories
+    mkdir -p /tmp/xdg-runtime
+    chmod 700 /tmp/xdg-runtime
+
+    # Clean up to save space
+    dnf clean all
+
+%runscript
+    echo "Welcome to the Fedora LXQt development container!"
+    startlxqt
+
+%startscript
+    # Set up runtime directory and start D-Bus
+    mkdir -p /tmp/xdg-runtime
+    export XDG_RUNTIME_DIR=/tmp/xdg-runtime
+    chmod 700 /tmp/xdg-runtime
+    
+    eval $(dbus-launch --sh-syntax)
+    export DBUS_SESSION_BUS_ADDRESS
+
+    # Start LXQt session in background
+    startlxqt &
+
+%labels
+    Author "Nitrous Support Manager"
+    Version "Fedora LXQt Extended Desktop for HPC"
+
+%help
+    This container includes an extended LXQt environment with web browsers, email client, file transfer tools, additional utilities, and desktop management tools for HPC workflows.

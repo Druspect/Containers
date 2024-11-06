@@ -1,0 +1,93 @@
+Bootstrap: docker
+From: debian:latest
+
+%setup
+    # No additional setup required outside the container.
+
+%environment
+    export DISPLAY=localhost:10.0
+    export LC_ALL=C.UTF-8
+    export LANG=C.UTF-8
+    export XDG_RUNTIME_DIR=/tmp/xdg-runtime
+
+%post
+    # Update and install LXQt desktop environment and essential packages
+    apt update && apt upgrade -y
+    apt install -y \
+        lxqt-core \
+        lxqt-panel \
+        lxqt-sudo \
+        openbox \
+        xorg \
+        dbus-x11 \
+        xauth \
+        curl \
+        wget \
+        nano \
+        vim \
+        htop \
+        openvpn \
+        python3 \
+        python3-pip \
+        build-essential \
+        git \
+        net-tools \
+        iputils-ping \
+        nmap \
+        wireshark \
+        tcpdump \
+        john \
+        aircrack-ng \
+        hydra \
+        sqlmap \
+        whois \
+        firefox-esr \
+        chromium \
+        thunderbird \
+        filezilla \
+        libreoffice \
+        gedit \
+        gimp \
+        inkscape \
+        evince \
+        sshfs \
+        tigervnc-standalone-server \
+        gparted \
+        tmux \
+        screen \
+        lxappearance \
+        feh \
+        lxqt-themes \
+        arc-theme \
+        papirus-icon-theme \
+        compton \
+        nitrogen
+
+    # Install additional Python packages for development and data analysis
+    pip3 install numpy pandas matplotlib jupyterlab scikit-learn seaborn scipy
+
+    # Clean up to save space
+    apt clean
+
+%runscript
+    echo "Welcome to the Debian LXQt development container!"
+    startlxqt
+
+%startscript
+    # Set up runtime directory and start D-Bus
+    mkdir -p /tmp/xdg-runtime
+    export XDG_RUNTIME_DIR=/tmp/xdg-runtime
+    chmod 700 /tmp/xdg-runtime
+    
+    eval $(dbus-launch --sh-syntax)
+    export DBUS_SESSION_BUS_ADDRESS
+
+    # Start LXQt session in background
+    startlxqt &
+
+%labels
+    Author "Nitrous Support Manager"
+    Version "Debian LXQt Extended Desktop for HPC"
+
+%help
+    This container includes an extended LXQt environment with web browsers, email client, file transfer tools, additional utilities, and desktop management tools for HPC workflows.

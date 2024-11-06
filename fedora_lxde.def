@@ -1,0 +1,98 @@
+Bootstrap: docker
+From: fedora:latest
+
+%setup
+    # No additional setup required outside the container.
+
+%environment
+    export DISPLAY=localhost:10.0
+    export LC_ALL=C.UTF-8
+    export LANG=C.UTF-8
+    export XDG_RUNTIME_DIR=/tmp/xdg-runtime
+
+%post
+    # Update and install essential packages
+    dnf install --skip-unavailable -y \
+        @lxde-desktop \
+        xorg-x11-server-Xorg \
+        dbus-x11 \
+        xauth \
+        curl \
+        wget \
+        nano \
+        vim-enhanced \
+        htop \
+        openvpn \
+        python3 \
+        python3-pip \
+        gcc-c++ \
+        git \
+        net-tools \
+        iputils \
+        nmap \
+        wireshark \
+        tcpdump \
+        john \
+        aircrack-ng \
+        hydra \
+        sqlmap \
+        whois \
+        firefox \
+        chromium \
+        thunderbird \
+        filezilla \
+        libreoffice \
+        gedit \
+        gimp \
+        inkscape \
+        evince \
+        okular \
+        fuse-sshfs \
+        vnc-server \
+        tigervnc-server \
+        gparted \
+        tmux \
+        screen \
+        tigervnc-server-module \
+        lxappearance \
+        feh \
+        lxde-icon-theme \
+        arc-theme \
+        papirus-icon-theme \
+        qt5-qtstyleplugins \
+        gtk-murrine-engine \
+        compton \
+        nitrogen
+
+    # Install additional Python packages for development and data analysis
+    pip3 install numpy pandas matplotlib jupyterlab scikit-learn seaborn scipy
+
+    # Set up necessary runtime and temporary directories
+    mkdir -p /tmp/xdg-runtime
+    chmod 700 /tmp/xdg-runtime
+
+    # Clean up to save space
+    dnf clean all
+
+%runscript
+    echo "Welcome to the expanded Fedora LXDE development container!"
+    startlxde
+
+%startscript
+    # Set up runtime directory and start D-Bus
+    mkdir -p /tmp/xdg-runtime
+    export XDG_RUNTIME_DIR=/tmp/xdg-runtime
+    chmod 700 /tmp/xdg-runtime
+    
+    eval $(dbus-launch --sh-syntax)
+    export DBUS_SESSION_BUS_ADDRESS
+
+    # Start LXDE session in background
+    startlxde &
+
+%labels
+    Author "Nitrous Support Manager"
+    Version "Fedora LXDE Extended Desktop for HPC"
+
+%help
+    This container includes an extended LXDE environment with web browsers, email client, file transfer tools, additional utilities, and desktop management tools for HPC workflows.

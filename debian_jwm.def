@@ -1,0 +1,73 @@
+Bootstrap: docker
+From: debian:bullseye
+
+%setup
+    # No additional setup required outside the container.
+
+%environment
+    export DISPLAY=localhost:10.0
+    export LC_ALL=C.UTF-8
+    export LANG=C.UTF-8
+    export XDG_RUNTIME_DIR=/tmp/xdg-runtime
+
+%post
+    # Update and install essential packages
+    apt-get update && apt-get install -y \
+        jwm \
+        xorg \
+        dbus-x11 \
+        xauth \
+        curl \
+        wget \
+        nano \
+        notepadqq \
+        vim \
+        htop \
+        openvpn \
+        python3 \
+        python3-pip \
+        g++ \
+        git \
+        net-tools \
+        iputils-ping \
+        nmap \
+        wireshark \
+        tcpdump \
+        john \
+        aircrack-ng \
+        hydra \
+        sqlmap \
+        whois
+
+    # Install ProtonVPN CLI
+    pip3 install protonvpn-cli
+
+    # Create XDG runtime directory for D-Bus
+    mkdir -p /tmp/xdg-runtime
+    chmod 700 /tmp/xdg-runtime
+
+    # Clean up to save space
+    apt-get clean
+
+%runscript
+    echo "Welcome to the Debian JWM development and security container!"
+    jwm
+
+%startscript
+    # Set up runtime directory and start D-Bus
+    mkdir -p /tmp/xdg-runtime
+    export XDG_RUNTIME_DIR=/tmp/xdg-runtime
+    chmod 700 /tmp/xdg-runtime
+    
+    eval $(dbus-launch --sh-syntax)
+    export DBUS_SESSION_BUS_ADDRESS
+
+    # Start JWM session in background
+    jwm &
+
+%labels
+    Author "Nitrous Support Manager"
+    Version "Debian JWM Development and Security Environment"
+
+%help
+    This container includes JWM with ProtonVPN, a full suite of security tools, and essential development tools for a minimalistic, efficient environment.
